@@ -6,7 +6,7 @@ from piece import Piece
 from move import Move
 import random
 
-colors = ["red", "blue", "yellow"]
+colors = ["BLUE", "RED", "GREEN", "PURPLE", "YELLOW", "WHITE"]
 
 class Board:
     tiles = None
@@ -26,7 +26,6 @@ class Board:
             move.tile.piece = move.piece
             move.tile.piece.placed = True
             self.move_tracker.do_move(move)
-            print("piece set in move", move.tile.piece)
             return True
         else:
             return False
@@ -34,7 +33,6 @@ class Board:
     def do_move_xy(self, x, y, top, left, right):
         for tile_move in self.tiles:
             if tile_move.x == x and tile_move.y == y:
-                print(tile_move.top, tile_move.left, tile_move.right)
                 return self.do_move(Move(tile_move, Piece(top, left, right)))
 
     def generate_move(self):
@@ -51,11 +49,10 @@ class Board:
             if move.piece.top is None:
                 move.piece.top = random.choice(colors)
 
-
             self.do_move(move)
             print("AI played move " + str(move.tile.x) + ", " + str(move.tile.y) + ": " + move.piece.top + move.piece.left + move.piece.right)
-            return True
-        return False
+            return move.tile.x, move.tile.y, move.tile.piece.top, move.tile.piece.left, move.tile.piece.right
+        return None
 
     def draw(self, screen):
         for tile in self.tiles:
@@ -106,7 +103,7 @@ class Tile:
                 self.right = Tile(counter - 1, 2, x + 1, y, tiles, left=self)
 
     def __hash__(self):
-        return (self.x * 1000) + self.y
+        return ((self.x + 50) * 1000) + self.y
 
     def draw(self, screen):
         scale = 50
