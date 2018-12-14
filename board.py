@@ -172,13 +172,22 @@ class Tile:
         #                          (self.x * scale - scale2 // 2 + 300, self.y * scale, scale2, scale2))
 
     def convert_colors(self, color):
-        if color == "red":
+        if color == "RED":
             return (255, 0, 0)
 
-        if color == "blue":
+        if color == "BLUE":
             return (0, 0, 255)
 
-        if color == "yellow":
+        if color == "YELLOW":
             return (255, 255, 0)
+
+        if color == "GREEN":
+            return (0, 255, 0)
+
+        if color == "WHITE":
+            return (255, 0, 255)
+
+        if color == "PURPLE":
+            return (0, 255, 255)
 
         return (255, 255, 255)

@@ -20,10 +20,10 @@ def deconvert_dres_stupide_kleur_assignments_voor_stomme_scheef_gedefineerde_tri
         return k3, k1, k2
     return k3, k2, k1
 
+
 def main():
 
     pygame.init()
-
 
     name = input("Enter name")
     server_ip = input("Enter ip")
@@ -63,18 +63,9 @@ def main():
             num_players = len(response[2:])
             break
 
-
-
-
     screen = pygame.display.set_mode((1280, 720))
 
     board = Board()
-    board.do_move_xy(0, 0, "red", "red", "red")
-
-
-
-
-
 
     while True:
         response = sock.recv(1024).decode().split(delim)
