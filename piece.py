@@ -7,7 +7,7 @@ class Piece:
     score = None
     placed = False
 
-    def __init__(self, top, left, right, score=-1):
+    def __init__(self, top, left, right, score=None):
         self.top = top
         self.left = left
         self.right = right

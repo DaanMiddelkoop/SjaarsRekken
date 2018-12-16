@@ -3,7 +3,7 @@ import time
 from board import Board
 from hand import Hand
 from bank import Bank
-from bot import generate_move
+from bot import generate_move, minimax
 
 
 def wait_key():
@@ -23,30 +23,26 @@ hand2 = Hand(bank)
 scores = [0, 0]
 
 
-# Do first move
-
-piece = hand2.get_pieces()[0]
-score = board.do_move_xy(1, 3, piece.top, piece.left, piece.right)
-
-print("hand2 has: ", hand2.__str__())
-hand2.remove_piece(0)
-hand2.add_piece(bank.get_piece())
-scores[1] += score
-
-
-def do_move(b, h):
-    move = generate_move(b, h)
+def do_move(current_player, first_move):
+    move = generate_move(board, [hand1, hand2], current_player, first_move)
     if move is None:
         return None
     _, _, _, _, _, s, i = move
-    h.remove_piece(i)
-    h.add_piece(bank.get_piece())
+    [hand1, hand2][current_player].remove_piece(i)
+    [hand1, hand2][current_player].add_piece(bank.get_piece())
     return s
 
+
+# Handle player 2
+print("hand2 has: ", hand2.__str__())
+score = do_move(1, True)
+scores[1] += score
+
 while True:
+    minimax(board, [hand1, hand2], 0, 0, 0)
     # Handle player 1
     print("hand1 has: ", hand1.__str__())
-    score = do_move(board, hand1)
+    score = do_move(0, False)
     if score is None:
         break
     scores[0] += score
@@ -55,11 +51,10 @@ while True:
     board.draw(screen)
     pygame.display.flip()
     time.sleep(0.01)
-    wait_key()
 
     # Handle player 2
     print("hand2 has: ", hand2.__str__())
-    score = do_move(board, hand2)
+    score = do_move(1, False)
     if score is None:
         break
     scores[1] += score
@@ -68,7 +63,6 @@ while True:
     board.draw(screen)
     pygame.display.flip()
     time.sleep(0.01)
-    wait_key()
 
 print("Done")
 print(scores)

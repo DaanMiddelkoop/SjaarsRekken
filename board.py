@@ -42,6 +42,12 @@ class Board:
             else:
                 tile.bonus = 1
 
+    def get_xy(self, x, y):
+        for tile in self.tiles:
+            if tile.x == x and tile.y == y:
+                return tile
+        return None
+
     def do_move(self, move):
         if self.first_move or self.move_tracker.is_available(move):
             self.first_move = False
