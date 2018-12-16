@@ -8,6 +8,7 @@ import random
 
 colors = ["BLUE", "RED", "GREEN", "PURPLE", "YELLOW", "WHITE"]
 
+
 class Board:
     tiles = None
     top = None
@@ -15,9 +16,31 @@ class Board:
 
     def __init__(self):
         self.tiles = []
-        self.top = Tile(12, 0, 0, 0, self.tiles)
+        self.top = Tile(10, 0, 0, 0, self.tiles)
         self.move_tracker = MoveTracker()
         self.first_move = True
+
+        for tile in self.tiles:
+            if tile.x == 0 and tile.y == 1:
+                tile.bonus = 3
+            elif tile.x == -4 and tile.y == 5:
+                tile.bonus = 3
+            elif tile.x == 4 and tile.y == 5:
+                tile.bonus = 3
+            elif tile.x == -2 and tile.y == 3:
+                tile.bonus = 2
+            elif tile.x == 2 and tile.y == 3:
+                tile.bonus = 2
+            elif tile.x == 0 and tile.y == 5:
+                tile.bonus = 2
+            elif tile.x == 0 and tile.y == 4:
+                tile.bonus = 4
+            elif tile.x == -1 and tile.y == 3:
+                tile.bonus = 4
+            elif tile.x == 1 and tile.y == 3:
+                tile.bonus = 4
+            else:
+                tile.bonus = 1
 
     def do_move(self, move):
         if self.first_move or self.move_tracker.is_available(move):
@@ -25,34 +48,16 @@ class Board:
 
             move.tile.piece = move.piece
             move.tile.piece.placed = True
+            score = self.calc_score(move)
             self.move_tracker.do_move(move)
-            return True
+            return score
         else:
-            return False
+            return 0
 
     def do_move_xy(self, x, y, top, left, right):
         for tile_move in self.tiles:
             if tile_move.x == x and tile_move.y == y:
                 return self.do_move(Move(tile_move, Piece(top, left, right)))
-
-    def generate_move(self):
-        moves = list(self.move_tracker.get_possible_moves())
-        if len(moves) > 0:
-            move = moves[0]
-            move.piece = deepcopy(move.piece)
-            if move.piece.left is None:
-                move.piece.left = random.choice(colors)
-
-            if move.piece.right is None:
-                move.piece.right = random.choice(colors)
-
-            if move.piece.top is None:
-                move.piece.top = random.choice(colors)
-
-            self.do_move(move)
-            print("AI played move " + str(move.tile.x) + ", " + str(move.tile.y) + ": " + move.piece.top + move.piece.left + move.piece.right)
-            return move.tile.x, move.tile.y, move.tile.piece.top, move.tile.piece.left, move.tile.piece.right
-        return None
 
     def draw(self, screen):
         for tile in self.tiles:
@@ -60,7 +65,16 @@ class Board:
             if tile.piece is not None:
                 tile.draw(screen)
 
-
+    def calc_score(self, move):
+        matching_sides = 0
+        if move.tile.left is not None:
+            matching_sides += 1
+        if move.tile.right is not None:
+            matching_sides += 1
+        if move.tile.top is not None:
+            matching_sides += 1
+        matching_sides = max(matching_sides, 1)
+        return move.tile.bonus * matching_sides * move.piece.score
 
 
 
@@ -182,12 +196,10 @@ class Tile:
             return (255, 255, 0)
 
         if color == "GREEN":
-            return (0, 255, 0)
-
-        if color == "WHITE":
-            return (255, 0, 255)
+            return (0, 128, 0)
 
         if color == "PURPLE":
-            return (0, 255, 255)
+            return (255, 0, 255)
 
-        return (255, 255, 255)
+        print(color)
+        return (128, 128, 128)
