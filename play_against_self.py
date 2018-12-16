@@ -64,6 +64,8 @@ while True:
     pygame.display.flip()
     time.sleep(0.01)
 
+board.draw(screen)
+pygame.display.flip()
 print("Done")
 print(scores)
 while True:

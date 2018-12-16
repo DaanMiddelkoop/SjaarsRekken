@@ -55,13 +55,12 @@ def generate_move(board, hands, player_index, first_turn):
     # Do a next move
 
     moves = minimax(board, hands, player_index, 0, player_index)
-    if len(moves) > 0:
-        move, index = random.choice(moves)
+    # if len(moves) > 0:
+    #     move, index = random.choice(moves)
+    if moves is not None:
+        move, index = moves
         score = board.do_move(move)
         return move.tile.x, move.tile.y, move.tile.piece.top, move.tile.piece.left, move.tile.piece.right, score, index
-
-
-
 
     # moves = list(board.move_tracker.get_possible_moves())
     # for move in moves:
@@ -79,14 +78,21 @@ def minimax(board, hands, player_index, depth, own_index):
     hand = hands[player_index % len(hands)]
 
     # Collect all possible moves
+    heighest_score = -100
+
     moves = []
+    best_move = None
     possible_positions = list(board.move_tracker.get_possible_moves())
     for move in possible_positions:
         for index in range(0, len(hand.get_pieces())):
             for perm in generate_permutations(hand.get_pieces()[index]):
                 if fits(move.piece, perm):
-                    moves.append((Move(move.tile, perm), index))
+                    if board.calc_score(Move(move.tile, perm)) > heighest_score:
+                        moves.append((Move(move.tile, perm), index))
+
+                        heighest_score = board.calc_score(Move(move.tile, perm))
+                        best_move = (Move(move.tile, perm), index)
 
     print("possible moves:", len(moves))
-    return moves
+    return best_move
 
